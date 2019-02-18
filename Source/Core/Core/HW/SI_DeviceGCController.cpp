@@ -119,7 +119,8 @@ int CSIDevice_GCController::RunBuffer(u8* _pBuffer, int _iLength)
 
 void CSIDevice_GCController::HandleMoviePadStatus(GCPadStatus* PadStatus)
 {
-	if (!Movie::IsPlayingInput())
+	//if (!Movie::IsPlayingInput())
+	if (Movie::IsPlayingInput())
 	{
 		Lua::UpdateScripts(PadStatus);
 	}
