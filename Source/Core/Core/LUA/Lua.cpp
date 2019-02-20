@@ -41,6 +41,28 @@
 
 
 //Lua Functions (C)
+
+// helper
+void lua_table_push_bool (lua_State* L, char* key, int value) {
+	lua_pushstring(L, key);
+	lua_pushboolean(L, value);
+	lua_settable(L, -3);
+}
+
+void lua_table_push_int (lua_State* L, char* key, int value) {
+	lua_pushstring(L, key);
+	lua_pushinteger(L, value);
+	lua_settable(L, -3);
+}
+
+int GetPadStatus (lua_State *L) {
+	int argc = lua_gettop(L);
+	
+	Lua::iGetPadStatus(L);
+	
+	return 0;
+}
+
 int ReadValue8(lua_State *L)
 {
 	int argc = lua_gettop(L);
@@ -435,7 +457,6 @@ void HandleLuaErrors(lua_State *L, int status)
 	}
 }
 
-
 namespace Lua
 {
 	//Dragonbane: Lua Stuff
@@ -461,6 +482,31 @@ namespace Lua
 
 
 	//Dragonbane: Lua Wrapper Functions
+	void iGetPadStatus (lua_State *L) {
+		lua_newtable(L);
+		
+		lua_table_push_bool(L, "L", PadLocal.button & PAD_BUTTON_LEFT);
+		lua_table_push_bool(L, "R", PadLocal.button & PAD_BUTTON_RIGHT);
+		lua_table_push_bool(L, "D", PadLocal.button & PAD_BUTTON_DOWN);
+		lua_table_push_bool(L, "U", PadLocal.button & PAD_BUTTON_UP);
+		lua_table_push_bool(L, "Z", PadLocal.button & PAD_TRIGGER_Z);
+		lua_table_push_bool(L, "R", PadLocal.button & PAD_TRIGGER_R);
+		lua_table_push_bool(L, "L", PadLocal.button & PAD_TRIGGER_L);
+		lua_table_push_bool(L, "A", PadLocal.button & PAD_BUTTON_START);
+		lua_table_push_bool(L, "B", PadLocal.button & PAD_BUTTON_START);
+		lua_table_push_bool(L, "X", PadLocal.button & PAD_BUTTON_START);
+		lua_table_push_bool(L, "Y", PadLocal.button & PAD_BUTTON_START);
+		lua_table_push_bool(L, "S", PadLocal.button & PAD_BUTTON_START);
+
+		lua_table_push_int(L, "JX", PadLocal.stickX);
+		lua_table_push_int(L, "JY", PadLocal.stickY);
+		lua_table_push_int(L, "CX", PadLocal.substickX);
+		lua_table_push_int(L, "CY", PadLocal.substickX);
+		
+		lua_table_push_int(L, "TL", PadLocal.triggerLeft);
+		lua_table_push_int(L, "TR", PadLocal.triggerRight);
+	}
+	
 	void iPressButton(const char* button)
 	{
 		if (!strcmp(button, "A"))
@@ -669,6 +715,8 @@ namespace Lua
 	static void RegisterGeneralLuaFunctions(lua_State* luaState)
 	{
 		//Make C functions available to Lua programs
+		lua_register(luaState, "GetPadStatus", GetPadStatus);
+		
 		lua_register(luaState, "ReadValue8", ReadValue8);
 		lua_register(luaState, "ReadValue16", ReadValue16);
 		lua_register(luaState, "ReadValue32", ReadValue32);
