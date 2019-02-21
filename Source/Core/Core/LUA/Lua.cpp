@@ -60,7 +60,7 @@ int GetPadStatus (lua_State *L) {
 	
 	Lua::iGetPadStatus(L);
 	
-	return 0;
+	return 1;
 }
 
 int ReadValue8(lua_State *L)
